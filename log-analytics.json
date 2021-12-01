@@ -1,6 +1,3 @@
-// 20211201132240
-// https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/LinkedTemplates/workspace.json
-
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
