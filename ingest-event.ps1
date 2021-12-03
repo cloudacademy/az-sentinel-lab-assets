@@ -3,6 +3,15 @@ PARAM(
     [Parameter(Mandatory=$true)]$SharedKey # The log lanlyics WorkspaceId
 )
 
+# You can use an optional field to specify the timestamp from the data. If the time field is not specified, Azure Monitor assumes the time is the message ingestion time
+#$TimeStampField = ""
+
+
+# Download telemetry data and convert from CSV
+#Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Telemetry/solarigate_event.csv" -OutFile "query_data.csv"
+#$file = "query_data.csv"
+#$payload = Import-Csv $file 
+
 # Create the function to create the authorization signature
 Function Write-OMSLogfile {
     <#
@@ -98,7 +107,7 @@ Function Write-OMSLogfile {
     }
     #Build the JSON file
     $logMessage = ($logdata | ConvertTo-Json -Depth 20)
-    
+
     #Submit the data
     $returnCode = PostLogAnalyticsData -CustomerID $CustomerID -SharedKey $SharedKey -Body $logMessage -Type $type
     Write-Verbose -Message "Post Statement Return Code $returnCode"
@@ -115,11 +124,11 @@ catch
 Write-Host $_.Exception.Response
 }
 $eventsData = Import-Csv "query_data.csv"
-    
+
     #Test Size; Log A limit is 30MB
     $tempdata = @()
     $tempDataSize = 0
-    
+
     if ((($eventsData |  Convertto-json -depth 20).Length) -gt 25MB) {        
 		Write-Host "Upload is over 25MB, needs to be split"									 
         foreach ($record in $eventsData) {            
@@ -139,14 +148,74 @@ $eventsData = Import-Csv "query_data.csv"
     Else {          
         $postLAStatus = Write-OMSLogfile -dateTime (Get-Date) -type $eventsTable -logdata $eventsData -CustomerID $CustomerId -SharedKey $SharedKey        
     }
-    
+
     Remove-Item "query_data.csv"
 
     return $postLAStatus
 }
 
+# Submit the data to the API endpoint
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/solarigate_CEFevent.csv" -EventsTable "CommonSecurityLog"
+
+#Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/securityEvents.csv" -EventsTable "SecurityEvent"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/disable_accounts.csv" -EventsTable "SigninLogs"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/office_activity_inbox_rule.csv" -EventsTable "OfficeActivity"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/azureActivity_adele.csv" -EventsTable "AzureActivity"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/office_activity.csv" -EventsTable "OfficeActivity"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/sign-in_adelete.csv" -EventsTable "SigninLogs"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/model_evasion_detection_CL_alerts.csv" -EventsTable "OfficeActivity"
+
+Write-Host $status
+
+$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/solarigate-beacon-umbrella.csv" -EventsTable "Cisco_Umbrella_dns"
+
+Write-Host $status
+
 $status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/Training/Azure-Sentinel-Training-Lab/Artifacts/Telemetry/AuditLogs_Hunting.csv" -EventsTable "AuditLogs"
 
+Write-Host $status
+
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/ABAPAppLog_CL.csv" -EventsTable "ABAPAppLog_CL"
+
+Write-Host $status
+
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/ABAPAuditLog_CL.csv" -EventsTable "ABAPAuditLog_CL"
+
+#Write-Host $status
+
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/ABAPChangeDocsLog_CL.csv" -EventsTable "ABAPChangeDocsLog_CL"
+
+Write-Host $status
+
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/ABAPCRLog_CL.csv" -EventsTable "ABAPCRLog_CL"
+
+Write-Host $status
+
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/ABAPJobLog_CL.csv" -EventsTable "ABAPJobLog_CL"
+
+Write-Host $status
+
+#$status = SendToLogA -url "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Artifacts/Telemetry/ABAPSpoolLog_CL.csv" -EventsTable "ABAPSpoolLog_CL"
 
 Write-Host $status
 
